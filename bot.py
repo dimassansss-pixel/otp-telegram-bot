@@ -145,7 +145,7 @@ async def main():
     await app.run_polling()
 
 # ===== ENTRY POINT =====
-if __name__ == "__main__":
+:
     asyncio.run(main())            "2. Crypto (USDC/BNB)\n\n"
             "Kirim /deposit [jumlah] untuk mulai."
         )
