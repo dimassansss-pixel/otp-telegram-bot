@@ -1,40 +1,23 @@
-import asyncio
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
-
-# ===== TOKEN =====
-# GANTI DENGAN TOKEN BARU DARI @BOTFATHER!
-TOKEN = "8902588624:AAHgrXLuJ3k4QT9kAMoCxAkeWn1Obefc0yQ"
-
-# ===== DATA SEMENTARA =====
-users = {}
-
-def get_user(user_id):
-    if user_id not in users:
-        users[user_id] = {"balance": 0, "orders": [], "pending_deposit": 0}
-    return users[user_id]
-
-# ===== COMMAND /start =====
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [InlineKeyboardButton("💰 Deposit", callback_data="deposit")],
-        [InlineKeyboardButton("📦 Order", callback_data="order")],
-        [InlineKeyboardButton("💳 Saldo", callback_data="balance")],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+# ===== MAIN FUNCTION =====
+async def main():
+    # Ganti dengan TOKEN asli dari @BotFather
+    TOKEN = "8902588624:AAE_KjQLnVd8JNSdWlY_19TQv-O68PSGIz8"
     
-    await update.message.reply_text(
-        "👋 Selamat datang di OTP Bot!\n\n"
-        "Pilih menu di bawah:",
-        reply_markup=reply_markup
-    )
-
-# ===== COMMAND /s, /d, /o, /g =====
-async def s(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Halo dari command /s")
-
-async def d(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Halo dari command /d")
+    app = Application.builder().token(TOKEN).build()  # <-- perbaiki di sini!
+    
+    # Handler command
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("s", s))
+    app.add_handler(CommandHandler("d", d))
+    app.add_handler(CommandHandler("o", o))
+    app.add_handler(CommandHandler("g", g))
+    app.add_handler(CommandHandler("deposit", deposit))
+    
+    # Handler callback (tombol)
+    app.add_handler(CallbackQueryHandler(button_handler))
+    
+    print("Bot berjalan di Railway...")
+    await app.run_polling()    await update.message.reply_text("Halo dari command /d")
 
 async def o(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Halo dari command /o")
