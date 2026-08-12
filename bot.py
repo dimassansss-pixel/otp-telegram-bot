@@ -60,7 +60,7 @@ if __name__ == "__main__":
     asyncio.run(main())        "👋 Selamat datang di OTP Bot!\n\n"
         "Pilih menu di bawah:",
         reply_markup=reply_markup
-    )
+    
 
 # === CALLBACK QUERY ===
 def button_handler(update: Update, context: CallbackContext):
