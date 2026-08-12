@@ -143,4 +143,20 @@ async def main():
 
 # ===== ENTRY POINT =====
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except RuntimeError as e:
+        if "You reached the end of the range" in str(e):
+            print("✅ Bot berhenti dengan normal")
+        else:
+            raise e
+
+# ===== ENTRY POINT =====
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except RuntimeError as e:
+        if "You reached the end of the range" in str(e):
+            print("Bot berhasil dihentikan dengan normal")
+        else:
+            raise e
