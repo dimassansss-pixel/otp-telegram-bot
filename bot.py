@@ -17,7 +17,7 @@ async def main():
     app.add_handler(CallbackQueryHandler(button_handler))
     
     print("Bot berjalan di Railway...")
-    await app.run_polling()    await update.message.reply_text("Halo dari command /d")
+        await update.message.reply_text("Halo dari command /d")
 
 async def o(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Halo dari command /o")
