@@ -1,11 +1,11 @@
 import os
 import requests
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
 
 # === KONFIGURASI ===
-TOKEN = os.environ.get("TOKEN", "8902588624:AAHji4-xFvzHh1LzOJMC3GCflWtZC1BnoRc")
-API_KEY = os.environ.get("API_KEY", "c9b3aa37-8d56-441e-aec6-8b8040f07450")
+TOKEN = os.environ.get("TOKEN", "8902588624:AAF8Wt4-EnJIAIxMDyXmHw3KwA1_Uygd_SA")
+API_KEY = os.environ.get("API_KEY", "7e277b75-82f0-48e5-b0ae-042e16ba76c9")
 
 # === DATABASE SEDERHANA ===
 users = {}
@@ -130,32 +130,4 @@ def main():
     updater.idle()
 
 if __name__ == "__main__":
-    main()        f"📱 Aplikasi: {app}\n"
-        f"🌍 Negara: {country}\n\n"
-        f"⏳ Tunggu sebentar...\n"
-        f"Fitur API OTP sedang dalam pengembangan."
-    )
-
-# === COMMAND GET OTP ===
-async def get_otp(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "⏳ Fitur cek OTP sedang dalam pengembangan.\n"
-        "Nanti akan terhubung dengan provider OTP."
-    )
-
-# === MAIN ===
-async def main():
-    app = Application.builder().token(TOKEN).build()
-    
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("deposit", deposit))
-    app.add_handler(CommandHandler("order", order))
-    app.add_handler(CommandHandler("getotp", get_otp))
-    app.add_handler(CallbackQueryHandler(button_handler))
-    
-    print("🤖 Bot berjalan di Render!")
-    await app.run_polling()
-
-if __name__ == "__main__":
-    import asyncio
-    asyncio.run(main())
+    main()
