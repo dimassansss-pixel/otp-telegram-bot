@@ -67,7 +67,7 @@ async def main():
     await app.run_polling()
 
 if __name__ == "__main__":
-    asyncio.run(main()        "👋 Selamat datang di OTP Bot!\n\n"
+    asyncio.run(main() )       "👋 Selamat datang di OTP Bot!\n\n"
         "Pilih menu di bawah:",
         reply_markup=reply_markup
     
