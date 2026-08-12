@@ -1,40 +1,54 @@
 import os
-import logging
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, CallbackContext
-
-# === LOGGING ===
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import asyncio
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # === KONFIGURASI ===
 TOKEN = os.environ.get("TOKEN", "8902588624:AAF8Wt4-EnJIAIxMDyXmHw3KwA1_Uygd_SA")
-API_KEY = os.environ.get("API_KEY", "7e277b75-82f0-48e5-b0ae-042e16ba76c9")
-
-# === DATABASE SEDERHANA ===
-users = {}
-orders = {}
-
-# === FUNGSI BANTU ===
-def get_user(user_id):
-    if user_id not in users:
-        users[user_id] = {"balance": 0, "orders": []}
-    return users[user_id]
 
 # === COMMAND /start ===
-def start(update: Update, context: CallbackContext):
-    user_id = update.effective_user.id
-    get_user(user_id)
-    
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
         [InlineKeyboardButton("💰 Deposit", callback_data="deposit")],
         [InlineKeyboardButton("📱 Pesan OTP", callback_data="order")],
-        [InlineKeyboardButton("📊 Saldo Saya", callback_data="balance")],
+        [InlineKeyboardButton("📊 Saldo", callback_data="balance")],
     ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text(
+        "👋 Selamat datang di OTP Bot!\n\nPilih menu di bawah:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+# === CALLBACK ===
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+    await query.edit_message_text(f"✅ Anda memilih: {query.data}")
+
+# === COMMAND LAINNYA ===
+async def deposit(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("💳 Fitur deposit sedang dikembangkan.")
+
+async def order(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("📱 Fitur order sedang dikembangkan.")
+
+async def get_otp(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("🔑 Fitur cek OTP sedang dikembangkan.")
+
+# === MAIN ===
+async def main():
+    app = Application.builder().token(TOKEN).build()
     
-    update.message.reply_text(
-        "👋 Selamat datang di OTP Bot!\n\n"
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("deposit", deposit))
+    app.add_handler(CommandHandler("order", order))
+    app.add_handler(CommandHandler("getotp", get_otp))
+    app.add_handler(CallbackQueryHandler(button_handler))
+    
+    print("🤖 Bot berjalan di Railway!")
+    await app.run_polling()
+
+if __name__ == "__main__":
+    asyncio.run(main())        "👋 Selamat datang di OTP Bot!\n\n"
         "Pilih menu di bawah:",
         reply_markup=reply_markup
     )
