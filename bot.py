@@ -2,7 +2,30 @@ import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
-# ===== FUNGSI-FUNGSI COMMAND =====
+# ===== DATA SEMENTARA (pakai dictionary sebagai database) =====
+users = {}
+
+def get_user(user_id):
+    """Ambil data user, buat baru kalau belum ada"""
+    if user_id not in users:
+        users[user_id] = {"saldo": 0, "orders": []}
+    return users[user_id]
+
+# ===== COMMAND /start =====
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    keyboard = [
+        [InlineKeyboardButton("💰 Deposit", callback_data="deposit")],
+        [InlineKeyboardButton("📦 Order", callback_data="order")],
+        [InlineKeyboardButton("💳 Saldo", callback_data="balance")],
+    ]
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    
+    await update.message.reply_text(
+        "Pilih menu di bawah:",
+        reply_markup=reply_markup
+    )
+
+# ===== COMMAND /s, /d, /o, /g =====
 async def s(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Halo dari command /s")
 
@@ -15,26 +38,75 @@ async def o(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def g(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Halo dari command /g")
 
+# ===== COMMAND /deposit =====
+async def deposit(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    user = get_user(user_id)
+    
+    # Cek apakah ada argumen jumlah
+    if context.args and context.args[0].isdigit():
+        jumlah = int(context.args[0])
+        user["saldo"] += jumlah
+        await update.message.reply_text(f"Berhasil deposit Rp {jumlah:,}")
+    else:
+        await update.message.reply_text(
+            "Metode Deposit:\n\n"
+            "1. QRIS (Rp 10.000 - Rp 1.000.000)\n"
+            "2. Crypto (USDC/BNB)\n\n"
+            "Kirim /deposit [jumlah] untuk deposit"
+        )
+
 # ===== CALLBACK QUERY HANDLER =====
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer()  # wajib untuk merespon callback
-
+    await query.answer()  # wajib
+    
+    user_id = query.from_user.id
+    user = get_user(user_id)
+    
     if query.data == "deposit":
         await query.edit_message_text(
             "Metode Deposit:\n\n"
-            "1. QRIS (Rp 1.000 - Rp 50.000)\n"
-            "2. Crvnto (USD/C/RNB)"
+            "1. QRIS (Rp 10.000 - Rp 1.000.000)\n"
+            "2. Crypto (USDC/BNB)\n\n"
+            "Kirim /deposit [jumlah] untuk deposit"
+        )
+    elif query.data == "order":
+        await query.edit_message_text(
+            "Pilih Aplikasi:\n\n"
+            "Kirim /order [aplikasi] untuk order\n"
+            "Contoh: /order whatsapp"
+        )
+    elif query.data == "balance":
+        await query.edit_message_text(
+            f"Saldo Anda: Rp {user['saldo']:,}\n"
+            f"Total Order: {len(user['orders'])}"
         )
 
 # ===== MAIN FUNCTION =====
 async def main():
-    # Ganti 'TOKEN_KAMU' dengan token bot asli
-    app = Application.builder().token("8902588624:AAF8Wt4-EnJIAIxMDyXmHw3KwA1_Uygd_SA").build()
-
-    # Tambahkan handler command
+    # Ganti dengan TOKEN asli dari @BotFather
+    TOKEN = "8902588624:AAE_KjQLnVd8JNSdWlY_19TQv-O68PSGIz8"
+    
+    app = Application.builder().token(TOKEN).build()
+    
+    # Handler command
+    app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("s", s))
     app.add_handler(CommandHandler("d", d))
+    app.add_handler(CommandHandler("o", o))
+    app.add_handler(CommandHandler("g", g))
+    app.add_handler(CommandHandler("deposit", deposit))
+    
+    # Handler callback (tombol)
+    app.add_handler(CallbackQueryHandler(button_handler))
+    
+    print("Bot berjalan di Railway...")
+    await app.run_polling()
+
+# ===== ENTRY POINT =====
+if __name__ == "__main__":
+    asyncio.run(main())    app.add_handler(CommandHandler("d", d))
     app.add_handler(CommandHandler("o", o))
     app.add_handler(CommandHandler("g", g))
     app.add_handler(CallbackQueryHandler(button_handler))  # <-- perbaiki di sini
